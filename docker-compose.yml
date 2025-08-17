@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  web:
+    image: php:8.2-apache
+    container_name: meu_apache
+    ports:
+      - "8080:80"
+    volumes:
+      - ./www:/var/www/html
+    restart: always
+
+  db:
+    image: mysql:8.0
+    container_name: meu_mysql
+    ports:
+      - "3308:3306"   # Porta livre para evitar conflito
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: meu_banco
+      MYSQL_USER: usuario
+      MYSQL_PASSWORD: senha
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: meu_phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    depends_on:
+      - db
+    restart: always
+
+volumes:
+  db_data:
